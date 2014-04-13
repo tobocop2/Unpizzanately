@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Unpizzanately</title>
+        <script type="text/javascript"
+            src="//static.twilio.com/libs/twiliojs/1.1/twilio.min.js"></script>
+        <script type="text/javascript"
+            src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js">
+            </script>
+            <link href="/static/client.css"
+            type="text/css" rel="stylesheet" />
+            <script type="text/javascript">
+
+                // run this once the page loads
+                $(function() {
+
+                    Twilio.Device.setup("{{ token }}");
+
+                    Twilio.Device.ready(function (device) {
+                        $("#log").text("Ready");
+                        });
+
+                    Twilio.Device.error(function (error) {
+                        $("#log").text("Error: " + error.message);
+                        });
+
+                    Twilio.Device.connect(function (conn) {
+                        $("#log").text("Successfully established call");
+                        });
+
+                    Twilio.Device.disconnect(function (conn) {
+                        $("#log").text("Call ended");
+                        });
+
+                    Twilio.Device.incoming(function (conn) {
+                        $("#log").text("Incoming connection from " + conn.parameters.From);
+                        // accept the incoming connection and start two-way audio
+                        conn.accept();
+                        });
+
+                    call = function() {
+                        // get the phone number to connect the call to
+                        params = {"PhoneNumber": $("#number").val()};
+                        Twilio.Device.connect(params);
+                    }
+
+                    hangup = function() {
+                        Twilio.Device.disconnectAll();
+                    }
+
+                });
+</script>
+  </head>
+  <body>
+
+      <input type="text" id="name" name="name"
+      placeholder="Enter their name"/>
+      <input type="text" id="zip" name="zip"
+      placeholder="Enter their zip code"/>
+      <input type="text" id="number" name="number"
+      placeholder="Enter a phone number to call"/>
+
+     <button class="call" onclick="call();">
+          Call
+      </button>
+
+      <button class="hangup" onclick="hangup();">
+          Hangup
+      </button>
+      <div id="log">Loading this dawg...</div>
+  </body>
+</html>
